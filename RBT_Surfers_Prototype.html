@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RBT Surfers — Lari, Kumpul, Belajar!</title>
+<style>
+:root{--navy:#242052;--pink:#ff5eae;--gold:#ffc83d;--green:#28c76f;--blue:#37a9f9;--cream:#fff8e8}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(160deg,#c5f4ff,#ffe6f2 55%,#fff3c9);color:var(--navy)}
+button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:14px;padding:12px 16px;font-weight:800;box-shadow:0 4px 0 #0002;transition:transform .08s}button:active{transform:translateY(2px);box-shadow:0 2px 0 #0002}
+.wrap{max-width:1000px;margin:auto;padding:14px}.hero{text-align:center;padding:14px 10px 8px}.logo{font-size:clamp(2rem,7vw,4rem);font-weight:1000;line-height:.95;letter-spacing:-2px;color:#ffb800;text-shadow:3px 4px 0 #fff,6px 7px 0 #5442a3}.logo span{display:block;color:#f64ea9;text-shadow:2px 3px 0 #fff,5px 6px 0 #5442a3}.tag{font-weight:800;margin:12px 0;color:#5b477e}
+.panel{background:#fffaf0;border:4px solid #fff;border-radius:24px;padding:16px;box-shadow:0 8px 0 #d8c8a5,0 14px 24px #403b6920;margin:12px 0}
+.row{display:flex;gap:10px;flex-wrap:wrap}.field{flex:1;min-width:170px}.field label{display:block;font-weight:800;margin:4px 0 6px}.field input,.field select{width:100%;padding:12px;border:2px solid #e7d7b7;border-radius:13px;background:white;color:var(--navy)}
+.primary{background:linear-gradient(#58e783,#20b95b);color:white;font-size:1.2rem;text-shadow:0 1px #16853d;border:3px solid #fff;width:100%;margin-top:12px;padding:15px}
+.secondary{background:linear-gradient(#ffda63,#ffb51d);color:#3f315e}.pink{background:linear-gradient(#ff9bd0,#ef4f9e);color:white}.blue{background:linear-gradient(#7bd0ff,#2e9df2);color:white}.small{padding:9px 12px;font-size:.9rem}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}.stat{background:#fff;border:2px solid #fff;border-radius:14px;padding:9px 5px;text-align:center;box-shadow:0 3px 0 #d9c9a9}.stat b{display:block;font-size:1.25rem}.stat small{font-weight:800;color:#74678c}
+#gameArea{display:none}.gamebox{position:relative;overflow:hidden;border:4px solid white;border-radius:22px;box-shadow:0 8px 0 #b4a7cf;background:#b5edff}
+canvas{display:block;width:100%;height:auto;touch-action:pan-y}.gamehint{text-align:center;font-size:.9rem;font-weight:700;margin:8px}
+.controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.controls button{min-width:75px;font-size:1.1rem}
+.quiz{position:absolute;inset:0;background:#241e4de8;display:none;align-items:center;justify-content:center;padding:14px;color:white}.quizcard{width:min(560px,100%);background:var(--cream);color:var(--navy);border-radius:20px;padding:18px;border:4px solid white;box-shadow:0 7px 0 #b8a9d0}.quizcard h3{margin:0 0 8px}.answers{display:grid;gap:8px;margin-top:12px}.answers button{text-align:left;background:white;border:2px solid #e2d6be;box-shadow:none;color:var(--navy)}.answers button.correct{background:#c9f8d9;border-color:#23b45d}.answers button.wrong{background:#ffd7df;border-color:#e94f70}.feedback{font-weight:800;min-height:26px;margin-top:10px}
+#result,#leaderPanel{display:none}.leaderlist{padding-left:24px}.leaderlist li{padding:6px 0;border-bottom:1px dashed #dfd2b6}.muted{color:#75688d;font-size:.9rem}.pill{display:inline-block;padding:5px 10px;border-radius:99px;background:#eee4ff;font-weight:800;font-size:.85rem}
+footer{text-align:center;padding:18px 5px;font-size:.82rem;color:#665b7d}
+@media(max-width:560px){.wrap{padding:9px}.panel{padding:12px}.stats{grid-template-columns:repeat(2,1fr)}.logo{letter-spacing:-1px}.field{min-width:130px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <div class="logo">RBT <span>SURFERS!</span></div>
+  <div class="tag">LARI • KUMPUL • BELAJAR • KUASAI RBT!</div>
+</header>
+
+<section class="panel" id="startPanel">
+  <h2 style="margin:0 0 8px">🎮 Jom mula bermain!</h2>
+  <p class="muted">Isi nama dan kelas. Pilih tingkatan, kemudian elak halangan, kumpul syiling dan jawab soalan RBT.</p>
+  <div class="row">
+    <div class="field"><label for="playerName">Nama pemain</label><input id="playerName" maxlength="45" placeholder="Masukkan nama anda" autocomplete="name"></div>
+    <div class="field"><label for="playerClass">Kelas</label><input id="playerClass" maxlength="25" placeholder="Contoh: 1 Bestari"></div>
+    <div class="field"><label for="formLevel">Tingkatan</label><select id="formLevel"><option value="1">RBT Tingkatan 1</option><option value="2">RBT Tingkatan 2</option><option value="campur">Campuran Tingkatan 1 & 2</option></select></div>
+  </div>
+  <button class="primary" id="startBtn">▶ MULA BERMAIN</button>
+  <div class="row" style="margin-top:10px">
+    <button class="pink" id="notesBtn">📘 Cara bermain</button><button class="secondary" id="leaderBtn">🏆 Leaderboard</button>
+  </div>
+  <div id="instructions" class="muted" style="display:none;margin-top:12px">
+    <b>Kawalan:</b> tekan ← / → atau butang kiri/kanan untuk bertukar lorong. Tekan ↑, Space atau LOMPAT untuk melompat. Di telefon, leret kiri/kanan/atas pada kawasan permainan. Elak penghadang. Setiap beberapa syiling, satu soalan RBT akan muncul. Jawapan betul memberi bonus mata.
+  </div>
+</section>
+
+<section id="gameArea">
+  <div class="stats">
+    <div class="stat"><small>⭐ MARKAH</small><b id="score">0</b></div>
+    <div class="stat"><small>🪙 SYILING</small><b id="coins">0</b></div>
+    <div class="stat"><small>🚀 TAHAP</small><b id="level">1</b></div>
+    <div class="stat"><small>❤️ NYAWA</small><b id="lives">3</b></div>
+  </div>
+  <div class="gamebox">
+    <canvas id="game" width="900" height="520" aria-label="Permainan larian tiga lorong"></canvas>
+    <div class="quiz" id="quiz">
+      <div class="quizcard">
+        <div class="pill" id="quizTopic">CABARAN RBT</div>
+        <h3 id="question">Soalan akan dipaparkan di sini</h3>
+        <div class="answers" id="answers"></div>
+        <div class="feedback" id="feedback" aria-live="polite"></div>
+        <button class="primary" id="continueBtn" style="display:none">Teruskan ▶</button>
+      </div>
+    </div>
+  </div>
+  <div class="gamehint">Kawalan: ◀ ▶ tukar lorong • ▲ lompat • Elak halangan!</div>
+  <div class="controls"><button class="blue" id="leftBtn">◀ KIRI</button><button class="secondary" id="jumpBtn">▲ LOMPAT</button><button class="blue" id="rightBtn">KANAN ▶</button><button class="pink" id="pauseBtn">Ⅱ JEDA</button></div>
+</section>
+
+<section class="panel" id="result">
+  <h2>🏁 Larian tamat!</h2><p id="resultText"></p>
+  <button class="primary" id="againBtn">↻ Main lagi</button>
+  <button class="secondary" id="resultLeaderBtn" style="margin-top:10px">🏆 Lihat leaderboard</button>
+</section>
+
+<section class="panel" id="leaderPanel">
+  <h2 style="margin-top:0">🏆 Leaderboard RBT Surfers</h2>
+  <p class="muted">Rekod prototaip disimpan dalam pelayar/peranti ini sahaja. Untuk leaderboard seluruh sekolah, sambungkan permainan kepada Google Sheets atau pangkalan data.</p>
+  <ol class="leaderlist" id="leaderList"></ol>
+  <div class="row"><button class="secondary" id="closeLeaderBtn">Tutup</button><button class="pink small" id="clearLeaderBtn">Padam rekod peranti ini</button></div>
+</section>
+<footer>RBT Surfers • Prototaip pembelajaran • Soalan contoh boleh dikemas kini mengikut DSKP dan topik yang diajar.</footer>
+</div>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const canvas=$('game'),ctx=canvas.getContext('2d');
+const questions={
+"1":[
+{topic:"Reka Bentuk",q:"Apakah maksud reka bentuk?",a:["Proses menghasilkan idea dan penyelesaian untuk memenuhi keperluan","Aktiviti mewarna sahaja","Kerja membaiki komputer sahaja","Proses menjual produk"],c:0,why:"Reka bentuk melibatkan penjanaan idea dan penyelesaian bagi memenuhi keperluan atau kehendak."},
+{topic:"Pengurusan Projek",q:"Apakah tujuan jadual kerja projek?",a:["Menambah kos projek","Menyusun tugasan dan masa pelaksanaan","Menggantikan lakaran","Memilih warna sahaja"],c:1,why:"Jadual kerja membantu merancang tugasan, tempoh dan urutan kerja."},
+{topic:"Lakaran",q:"Lakaran awal biasanya digunakan untuk…",a:["Merekod idea visual dengan cepat","Mengira markah peperiksaan","Menggantikan semua bahan","Menguji bateri"],c:0,why:"Lakaran awal membantu meneroka dan menyampaikan idea reka bentuk."},
+{topic:"Teknologi",q:"Antara berikut, yang manakah contoh teknologi dalam kehidupan harian?",a:["Batu di tepi jalan sahaja","Sistem lampu isyarat","Awan di langit","Daun gugur"],c:1,why:"Lampu isyarat ialah sistem teknologi yang membantu mengawal lalu lintas."},
+{topic:"Keselamatan",q:"Apakah tindakan yang betul sebelum menggunakan alatan bengkel?",a:["Terus menggunakannya tanpa arahan","Memastikan alatan sesuai dan mematuhi arahan keselamatan","Berlari sambil membawa alatan","Meninggalkan alatan di lantai"],c:1,why:"Patuhi arahan dan amalan keselamatan sebelum menggunakan alatan."}
+],
+"2":[
+{topic:"Reka Bentuk Elektrik",q:"Apakah fungsi suis dalam litar elektrik?",a:["Menyimpan tenaga selama-lamanya","Membuka dan menutup litar","Menghasilkan semua warna","Mengukur panjang wayar"],c:1,why:"Suis mengawal aliran arus dengan membuka atau menutup litar."},
+{topic:"Komponen Elektronik",q:"Apakah fungsi LED dalam litar?",a:["Mengeluarkan cahaya","Menyimpan air","Mengukur jisim","Memotong wayar"],c:0,why:"LED ialah diod pemancar cahaya."},
+{topic:"Litar Elektrik",q:"Apakah yang biasanya berlaku jika litar tidak lengkap?",a:["Komponen sentiasa menyala","Arus mengalir tanpa sumber","Arus tidak dapat mengalir dalam litar terbuka","Bateri bertambah besar"],c:2,why:"Litar terbuka memutuskan laluan arus elektrik."},
+{topic:"Reka Bentuk Elektronik",q:"Apakah tujuan simulasi litar sebelum membina litar sebenar?",a:["Menguji sambungan dan mengesan kesilapan dengan lebih selamat","Menjadikan wayar lebih panjang secara automatik","Menghapuskan keperluan memahami litar","Menukar semua komponen menjadi bateri"],c:0,why:"Simulasi membantu menguji reka bentuk dan mengesan masalah sebelum pemasangan sebenar."},
+{topic:"Proses Pembuatan",q:"Mengapakah pengukuran perlu dibuat dengan teliti semasa menghasilkan produk?",a:["Supaya bahan dibazirkan","Supaya bahagian produk menepati ukuran yang dirancang","Supaya produk tidak perlu diuji","Supaya alatan hilang"],c:1,why:"Pengukuran tepat membantu menghasilkan produk yang menepati spesifikasi."}
+]};
+let state={},running=false,paused=false,raf=0,last=0,spawn=0,quizAt=5,objects=[],player={lane:1,jump:0},touchStart=null;
+function resize(){/* canvas uses fixed logical dimensions and scales responsively */}
+function reset(){state={name:$('playerName').value.trim(),klass:$('playerClass').value.trim(),form:$('formLevel').value,score:0,coins:0,level:1,lives:3,answered:0,questions:0};objects=[];player={lane:1,jump:0};spawn=0;quizAt=5;last=0;paused=false;$('score').textContent='0';$('coins').textContent='0';$('level').textContent='1';$('lives').textContent='3';$('pauseBtn').textContent='Ⅱ JEDA';}
+function start(){if(!$('playerName').value.trim()||!$('playerClass').value.trim()){alert('Sila masukkan nama dan kelas terlebih dahulu.');return}cancelAnimationFrame(raf);reset();$('startPanel').style.display='none';$('result').style.display='none';$('leaderPanel').style.display='none';$('gameArea').style.display='block';$('quiz').style.display='none';running=true;draw(0);raf=requestAnimationFrame(loop)}
+function lanes(){return [300,450,600]}
+function spawnObj(){let lane=Math.floor(Math.random()*3);let coin=Math.random()<.66;objects.push({lane,z:0,type:coin?'coin':'block',offset:Math.random()*18});}
+function move(d){if(!running||paused||$('quiz').style.display==='flex')return;player.lane=Math.max(0,Math.min(2,player.lane+d))}
+function jump(){if(!running||paused||$('quiz').style.display==='flex')return;player.jump=1}
+function loop(t){if(!running)return;if(paused){raf=requestAnimationFrame(loop);return}let dt=Math.min((t-last)/1000||0,.04);last=t;spawn+=dt;if(spawn>.72-Math.min(state.level*.035,.3)){spawn=0;spawnObj()}let speed=.34+state.level*.035;objects.forEach(o=>o.z+=dt*speed);if(player.jump>0)player.jump=Math.max(0,player.jump-dt*2.3);
+objects=objects.filter(o=>{if(o.z>.86&&!o.hit){o.hit=true;if(o.lane===player.lane){if(o.type==='coin'){state.coins++;state.score+=10;$('coins').textContent=state.coins;$('score').textContent=state.score;if(state.coins>=state.level*10){state.level++;$('level').textContent=state.level}if(state.coins>=quizAt){quizAt+=5;showQuiz()}}else if(player.jump<.25){state.lives--;$('lives').textContent=state.lives;state.score=Math.max(0,state.score-15);$('score').textContent=state.score;if(state.lives<=0){endGame();return false}}}}return o.z<1.05});draw(t);if(running)raf=requestAnimationFrame(loop)}
+function draw(t){let w=canvas.width,h=canvas.height;ctx.clearRect(0,0,w,h);
+let sky=ctx.createLinearGradient(0,0,0,h);sky.addColorStop(0,'#85dfff');sky.addColorStop(.58,'#e8fbff');sky.addColorStop(1,'#ffd9c7');ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
+// cartoon skyline
+ctx.fillStyle='#8dd5d2';for(let i=0;i<10;i++){let x=i*100-20;let bh=65+(i*37%65);ctx.fillRect(x,180-bh,65,bh);ctx.fillStyle='#fff0c8';for(let j=0;j<3;j++)ctx.fillRect(x+12+j*17,190-bh,7,12);ctx.fillStyle='#8dd5d2'}
+ctx.fillStyle='#efb66d';ctx.beginPath();ctx.moveTo(210,210);ctx.lineTo(690,210);ctx.lineTo(900,520);ctx.lineTo(0,520);ctx.closePath();ctx.fill();
+ctx.fillStyle='#665b83';ctx.beginPath();ctx.moveTo(280,210);ctx.lineTo(620,210);ctx.lineTo(850,520);ctx.lineTo(50,520);ctx.closePath();ctx.fill();
+// lanes and rails
+ctx.strokeStyle='#d6d0e6';ctx.lineWidth=7;for(let x of [350,450,550]){ctx.beginPath();ctx.moveTo(x,215);ctx.lineTo(450+(x-450)*2.3,520);ctx.stroke()}
+ctx.strokeStyle='#f7e8b9';ctx.lineWidth=3;for(let y=230;y<520;y+=42){let yy=(y-210)/310;let spread=170+yy*280;ctx.beginPath();ctx.moveTo(450-spread,y);ctx.lineTo(450+spread,y);ctx.stroke()}
+// side greenery
+ctx.font='34px sans-serif';ctx.fillText('🌴',35,240);ctx.fillText('🌴',810,240);ctx.fillText('🏫',70,190);ctx.fillText('🏠',760,190);
+objects.forEach(o=>{let p=o.z;let y=225+p*285;let x=450+(lanes()[o.lane]-450)*(0.22+p*.78);let size=15+p*35;if(o.type==='coin'){ctx.font=`${size*1.25}px sans-serif`;ctx.textAlign='center';ctx.fillText('🪙',x,y); }else{ctx.fillStyle='#ff596b';ctx.fillRect(x-size*.6,y-size*.5,size*1.2,size);ctx.fillStyle='#fff';ctx.fillRect(x-size*.5,y-size*.25,size,size*.18);ctx.font=`${size*.7}px sans-serif`;ctx.textAlign='center';ctx.fillText('⚠️',x,y-size*.65)}});
+// player shadow and character
+let px=lanes()[player.lane],py=435-player.jump*100;ctx.fillStyle='#40375a55';ctx.beginPath();ctx.ellipse(px,464,34,10,0,0,Math.PI*2);ctx.fill();
+ctx.font='76px sans-serif';ctx.textAlign='center';ctx.fillText('🏃🏻',px,py);ctx.font='22px sans-serif';ctx.fillText('🎒',px+24,py-18);
+ctx.textAlign='left';ctx.fillStyle='#fff';ctx.font='bold 20px system-ui';ctx.fillText('RBT SURFERS',20,32);
+if(paused){ctx.fillStyle='#241e4dcc';ctx.fillRect(0,0,w,h);ctx.fillStyle='white';ctx.font='bold 42px system-ui';ctx.textAlign='center';ctx.fillText('DIJEDA',w/2,h/2)}
+}
+function showQuiz(){paused=true;let pool=state.form==='campur'?[...questions["1"],...questions["2"]]:questions[state.form];let q=pool[Math.floor(Math.random()*pool.length)];$('quizTopic').textContent=q.topic.toUpperCase();$('question').textContent=q.q;$('answers').innerHTML='';$('feedback').textContent='';$('continueBtn').style.display='none';q.a.forEach((a,i)=>{let b=document.createElement('button');b.textContent=String.fromCharCode(65+i)+'. '+a;b.onclick=()=>{if($('answers').dataset.done==='1')return;$('answers').dataset.done='1';[...$('answers').children].forEach((el,j)=>{if(j===q.c)el.classList.add('correct');else if(j===i)el.classList.add('wrong');el.disabled=true});if(i===q.c){state.score+=50;state.answered++;$('feedback').textContent='Betul! +50 mata. '+q.why}else{$('feedback').textContent='Belum tepat. '+q.why}state.questions++;$('score').textContent=state.score;$('continueBtn').style.display='block'};$('answers').appendChild(b)});$('answers').dataset.done='0';$('quiz').style.display='flex'}
+$('continueBtn').onclick=()=>{$('quiz').style.display='none';paused=false;last=0};
+function endGame(){running=false;cancelAnimationFrame(raf);$('quiz').style.display='none';$('gameArea').style.display='none';$('result').style.display='block';$('resultText').textContent=`${state.name} (${state.klass}) memperoleh ${state.score} mata, mengumpul ${state.coins} syiling dan menjawab ${state.answered}/${state.questions} soalan dengan betul.`;saveScore()}
+function saveScore(){let key='rbtSurfersLeaderboardV1',list=[];try{list=JSON.parse(localStorage.getItem(key)||'[]')}catch(e){}list.push({name:state.name,klass:state.klass,form:state.form,score:state.score,coins:state.coins,date:new Date().toLocaleDateString('ms-MY')});list.sort((a,b)=>b.score-a.score);localStorage.setItem(key,JSON.stringify(list.slice(0,50)))}
+function showLeaders(){let list=[];try{list=JSON.parse(localStorage.getItem('rbtSurfersLeaderboardV1')||'[]')}catch(e){}$('leaderList').innerHTML='';if(!list.length){$('leaderList').innerHTML='<li>Belum ada rekod. Selesaikan satu larian dahulu!</li>'}else list.slice(0,20).forEach((x,i)=>{let li=document.createElement('li');li.textContent=`${x.name} — ${x.klass} | ${x.score} mata | ${x.coins} syiling`; $('leaderList').appendChild(li)});$('leaderPanel').style.display='block'}
+$('startBtn').onclick=start;$('leftBtn').onclick=()=>move(-1);$('rightBtn').onclick=()=>move(1);$('jumpBtn').onclick=jump;
+$('pauseBtn').onclick=()=>{if(!running)return;paused=!paused;$('pauseBtn').textContent=paused?'▶ SAMBUNG':'Ⅱ JEDA';if($('quiz').style.display==='flex'&&paused===false)$('quiz').style.display='none';draw(0)};
+$('notesBtn').onclick=()=>{$('instructions').style.display=$('instructions').style.display==='none'?'block':'none'};
+$('leaderBtn').onclick=showLeaders;$('resultLeaderBtn').onclick=showLeaders;$('closeLeaderBtn').onclick=()=>$('leaderPanel').style.display='none';
+$('clearLeaderBtn').onclick=()=>{if(confirm('Padam semua rekod leaderboard yang disimpan pada peranti ini?')){localStorage.removeItem('rbtSurfersLeaderboardV1');showLeaders()}};
+$('againBtn').onclick=()=>{$('result').style.display='none';$('startPanel').style.display='block'};
+window.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp',' '].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft')move(-1);if(e.key==='ArrowRight')move(1);if(e.key==='ArrowUp'||e.key===' ')jump();if(e.key.toLowerCase()==='p'&&running){paused=!paused;$('pauseBtn').textContent=paused?'▶ SAMBUNG':'Ⅱ JEDA'}});
+canvas.addEventListener('touchstart',e=>{touchStart={x:e.changedTouches[0].clientX,y:e.changedTouches[0].clientY}},{passive:true});
+canvas.addEventListener('touchend',e=>{if(!touchStart)return;let dx=e.changedTouches[0].clientX-touchStart.x,dy=e.changedTouches[0].clientY-touchStart.y;if(Math.abs(dx)>25&&Math.abs(dx)>Math.abs(dy))move(dx>0?1:-1);else if(dy<-20)jump();touchStart=null},{passive:true});
+})();
+</script>
+</body>
+</html>
